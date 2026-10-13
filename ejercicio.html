@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mathsics — Ejercicio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* ── Layout ── */
+        .exercise-page {
+            min-height: calc(100vh - 66px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .exercise-card {
+            width: 100%;
+            max-width: 580px;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: var(--glass-border);
+            box-shadow: 0 24px 64px rgba(15, 23, 42, 0.09), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            border-radius: 32px;
+            padding: 36px 40px 40px;
+            text-align: center;
+            animation: card-in 0.6s var(--ease-spring) both;
+        }
+        @keyframes card-in {
+            from { opacity: 0; transform: translateY(30px) scale(0.96); }
+            to   { opacity: 1; transform: none; }
+        }
+
+        /* ── Barra superior ── */
+        .quiz-topbar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .back-btn {
+            display: grid;
+            place-items: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            text-decoration: none;
+            transition: all 0.2s var(--ease-spring);
+        }
+        .back-btn:hover { background: white; color: var(--text-main); transform: translateX(-3px); }
+
+        .progress-track {
+            flex: 1;
+            height: 12px;
+            background: rgba(148, 163, 184, 0.22);
+            border-radius: 100px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            position: relative;
+            height: 100%;
+            background: linear-gradient(90deg, var(--brand-blue-light), var(--brand-indigo));
+            border-radius: 100px;
+            transition: width 0.6s var(--ease-spring);
+        }
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 2px; left: 8px; right: 8px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.45);
+            border-radius: 100px;
+        }
+
+        .pill {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            border-radius: 100px;
+            font-size: 0.82rem;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+        .error-pill  { background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .streak-pill { background: rgba(249, 115, 22, 0.1); border: 1px solid rgba(249, 115, 22, 0.28); color: var(--theme-orange); display: none; }
+        .streak-pill.show { display: flex; animation: pill-pop 0.5s var(--ease-spring); }
+        .pill.bump { animation: pill-pop 0.4s var(--ease-spring); }
+        @keyframes pill-pop {
+            0%   { transform: scale(1); }
+            45%  { transform: scale(1.3) rotate(-4deg); }
+            100% { transform: scale(1); }
+        }
+
+        /* ── Mascota ── */
+        .mascot-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 26px;
+            text-align: left;
+        }
+
+        .mascot {
+            font-size: 3.2rem;
+            line-height: 1;
+            flex-shrink: 0;
+            filter: drop-shadow(0 6px 8px rgba(15, 23, 42, 0.15));
+            animation: mascot-idle 3s ease-in-out infinite;
+            transform-origin: 50% 90%;
+        }
+        .mascot.happy { animation: mascot-hop 0.6s var(--ease-spring); }
+        .mascot.sad   { animation: mascot-shake 0.5s ease-in-out; }
+        @keyframes mascot-idle {
+            0%, 100% { transform: translateY(0) rotate(0); }
+            50%      { transform: translateY(-4px) rotate(3deg); }
+        }
+        @keyframes mascot-hop {
+            0%   { transform: translateY(0) scale(1, 1); }
+            30%  { transform: translateY(-22px) scale(0.92, 1.1); }
+            60%  { transform: translateY(0) scale(1.12, 0.88); }
+            100% { transform: translateY(0) scale(1, 1); }
+        }
+        @keyframes mascot-shake {
+            0%, 100% { transform: rotate(0); }
+            20% { transform: rotate(-14deg); }
+            40% { transform: rotate(12deg); }
+            60% { transform: rotate(-8deg); }
+            80% { transform: rotate(5deg); }
+        }
+
+        .speech {
+            position: relative;
+            flex: 1;
+            padding: 12px 16px;
+            background: white;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-main);
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.07);
+            transition: background 0.3s, color 0.3s;
+            letter-spacing: -0.2px;
+        }
+        .speech::before {
+            content: '';
+            position: absolute;
+            left: -7px;
+            top: 50%;
+            width: 16px;
+            height: 16px;
+            background: inherit;
+            transform: translateY(-50%) rotate(45deg);
+            border-radius: 3px;
+        }
+        .speech.pop { animation: speech-pop 0.4s var(--ease-spring); }
+        .speech.success { background: #ecfdf5; color: #047857; }
+        .speech.streak  { background: #eff6ff; color: #1d4ed8; }
+        .speech.error   { background: #fef2f2; color: #dc2626; }
+        @keyframes speech-pop {
+            from { transform: scale(0.85); opacity: 0.4; }
+            to   { transform: scale(1); opacity: 1; }
+        }
+
+        /* ── Pregunta ── */
+        .question-label {
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .question-text {
+            font-size: 3.6rem;
+            font-weight: 900;
+            margin: 0 0 32px;
+            letter-spacing: -2px;
+            line-height: 1;
+            background: linear-gradient(135deg, var(--text-main), #334155 50%, var(--brand-indigo));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .question-text.q-in { animation: q-in 0.5s var(--ease-spring) both; }
+        @keyframes q-in {
+            from { opacity: 0; transform: translateY(18px) scale(0.92); }
+            to   { opacity: 1; transform: none; }
+        }
+
+        /* ── Opciones ── */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+        }
+
+        .option-btn {
+            position: relative;
+            padding: 24px 12px 20px;
+            background: rgba(255, 255, 255, 0.85);
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            border-bottom: 5px solid #dbeafe;
+            border-radius: 20px;
+            font-size: 2rem;
+            font-weight: 900;
+            font-family: inherit;
+            color: var(--text-main);
+            letter-spacing: -1px;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+            transition: transform 0.2s var(--ease-spring), border-color 0.2s, background 0.2s, color 0.2s, box-shadow 0.2s;
+            animation: opt-in 0.5s var(--ease-spring) backwards;
+            animation-delay: calc(var(--i) * 70ms + 120ms);
+        }
+        @keyframes opt-in {
+            from { opacity: 0; transform: translateY(24px) scale(0.85); }
+            to   { opacity: 1; transform: none; }
+        }
+
+        .option-btn .key-hint {
+            position: absolute;
+            top: 8px;
+            left: 10px;
+            font-size: 0.68rem;
+            font-weight: 800;
+            color: #94a3b8;
+            letter-spacing: 0;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--brand-blue);
+            border-bottom-color: var(--brand-blue);
+            background: white;
+            color: var(--brand-blue);
+            transform: translateY(-5px);
+            box-shadow: 0 14px 28px rgba(59, 130, 246, 0.18);
+        }
+        .option-btn:active:not(:disabled) { transform: translateY(1px); border-bottom-width: 2px; }
+
+        .option-btn.wrong {
+            background: #fef2f2;
+            border-color: #fca5a5;
+            border-bottom-color: #ef4444;
+            color: #ef4444;
+            animation: shake 0.45s ease-out;
+        }
+        .option-btn.eliminated { opacity: 0.4; cursor: not-allowed; }
+
+        .option-btn.correct {
+            background: #ecfdf5;
+            border-color: #6ee7b7;
+            border-bottom-color: var(--theme-emerald);
+            color: var(--theme-emerald);
+            transform: translateY(-4px) scale(1.06);
+            box-shadow: 0 14px 30px rgba(16, 185, 129, 0.28);
+        }
+        .option-btn:disabled:not(.correct):not(.eliminated):not(.wrong) { opacity: 0.55; cursor: default; }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-10px); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(-6px); }
+            80% { transform: translateX(4px); }
+        }
+
+        /* ── Resultados ── */
+        .results-screen { display: none; }
+        .results-screen.show { display: block; }
+
+        .results-emoji {
+            display: block;
+            font-size: 4.5rem;
+            margin-bottom: 12px;
+            animation: trophy-in 0.8s var(--ease-spring) both;
+        }
+        @keyframes trophy-in {
+            0%   { transform: scale(0) rotate(-40deg); opacity: 0; }
+            100% { transform: scale(1) rotate(0); opacity: 1; }
+        }
+
+        .results-title {
+            font-size: 1.9rem;
+            font-weight: 900;
+            margin: 0 0 6px;
+            letter-spacing: -1px;
+        }
+        .results-subtitle {
+            color: var(--text-muted);
+            font-size: 0.92rem;
+            font-weight: 500;
+            margin: 0 0 28px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+        .stat-box {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            padding: 18px 8px;
+            border-radius: 20px;
+            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.05);
+            animation: opt-in 0.5s var(--ease-spring) both;
+        }
+        .stat-box:nth-child(1) { animation-delay: 0.35s; }
+        .stat-box:nth-child(2) { animation-delay: 0.45s; }
+        .stat-box:nth-child(3) { animation-delay: 0.55s; }
+
+        .stat-value {
+            font-size: 2.1rem;
+            font-weight: 900;
+            color: var(--brand-blue);
+            line-height: 1;
+            margin-bottom: 6px;
+            letter-spacing: -1px;
+            font-variant-numeric: tabular-nums;
+        }
+        .stat-value.green { color: var(--theme-emerald); }
+        .stat-value.red   { color: #ef4444; }
+        .stat-label {
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.9px;
+        }
+
+        .primary-btn {
+            width: 100%;
+            padding: 17px;
+            background: linear-gradient(135deg, var(--brand-blue-light), var(--brand-blue) 55%, var(--brand-indigo));
+            color: white;
+            font-size: 1.05rem;
+            font-weight: 800;
+            font-family: inherit;
+            letter-spacing: -0.3px;
+            border: none;
+            border-bottom: 5px solid #1d4ed8;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 12px 28px rgba(59, 130, 246, 0.35);
+            transition: transform 0.2s var(--ease-spring), box-shadow 0.2s;
+            animation: opt-in 0.5s var(--ease-spring) 0.7s backwards;
+        }
+        .primary-btn:hover { transform: translateY(-3px); box-shadow: 0 18px 34px rgba(59, 130, 246, 0.42); }
+        .primary-btn:active { transform: translateY(2px); border-bottom-width: 2px; }
+
+        @media (max-width: 520px) {
+            .exercise-card { padding: 24px 20px 28px; border-radius: 26px; }
+            .question-text { font-size: 2.8rem; }
+            .option-btn { font-size: 1.6rem; padding: 20px 8px 16px; }
+            .options-grid { gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-ambient" aria-hidden="true">
+        <span class="orb orb-sky"></span>
+        <span class="orb orb-indigo"></span>
+        <span class="orb orb-emerald"></span>
+        <span class="cloud c1"></span>
+        <span class="cloud c2"></span>
+    </div>
+    <div class="bg-pattern" aria-hidden="true"></div>
+
+    <header class="header">
+        <div class="logo">
+            <span class="logo-icon">📐</span>
+            <div class="title-area">
+                <h1>Mathsics</h1>
+                <p>Resuelve el ejercicio</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="exercise-page">
+        <div class="exercise-card">
+
+            <!-- ── Preguntas ── -->
+            <div id="quiz-screen">
+                <div class="quiz-topbar">
+                    <a href="index.html" class="back-btn" title="Salir">←</a>
+                    <div class="progress-track">
+                        <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <div class="pill streak-pill" id="streak-pill">🔥 <span id="live-streak">0</span></div>
+                    <div class="pill error-pill" id="error-pill">💔 <span id="live-errors">0</span></div>
+                </div>
+
+                <div class="mascot-row">
+                    <div class="mascot" id="mascot">🦉</div>
+                    <div class="speech" id="speech">¡Tú puedes! Elige la respuesta correcta.</div>
+                </div>
+
+                <div class="question-label">Pregunta <span id="current-q">1</span> de 3</div>
+                <h2 class="question-text" id="question-text">? + ? = ?</h2>
+
+                <div class="options-grid" id="options-container"></div>
+            </div>
+
+            <!-- ── Resultados ── -->
+            <div id="results-screen" class="results-screen">
+                <span class="results-emoji" id="results-emoji">🎉</span>
+                <h2 class="results-title">¡Completado!</h2>
+                <p class="results-subtitle" id="results-subtitle">Regresa al mapa para ver tu recompensa</p>
+
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-value" id="stat-accuracy">0%</div>
+                        <div class="stat-label">Precisión</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value green" id="stat-correct">0</div>
+                        <div class="stat-label">Aciertos</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value red" id="stat-errors">0</div>
+                        <div class="stat-label">Errores</div>
+                    </div>
+                </div>
+
+                <button class="primary-btn" id="btn-continue">Ver mi recompensa →</button>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="fx.js"></script>
+    <script>
+        const questions = [
+            { q: "2 + 2",  options: [3, 4, 5], correct: 4 },
+            { q: "4 + 4",  options: [7, 8, 9], correct: 8 },
+            { q: "3 × 2",  options: [5, 6, 8], correct: 6 }
+        ];
+
+        let currentIndex = 0;
+        let errors = 0;
+        let correct = 0;
+        let currentStreak = 0;
+        let waiting = false;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const levelId = urlParams.get('levelId') || 1;
+
+        const elQuestionText = document.getElementById('question-text');
+        const elCurrentQ     = document.getElementById('current-q');
+        const elOptions      = document.getElementById('options-container');
+        const elLiveErrors   = document.getElementById('live-errors');
+        const elErrorPill    = document.getElementById('error-pill');
+        const elStreakPill   = document.getElementById('streak-pill');
+        const elLiveStreak   = document.getElementById('live-streak');
+        const elProgressFill = document.getElementById('progress-fill');
+        const elMascot       = document.getElementById('mascot');
+        const elSpeech       = document.getElementById('speech');
+
+        function say(text, cls) {
+            elSpeech.textContent = text;
+            elSpeech.className = 'speech ' + (cls || '');
+            void elSpeech.offsetWidth;
+            elSpeech.classList.add('pop');
+        }
+
+        function mascotReact(cls) {
+            elMascot.classList.remove('happy', 'sad');
+            void elMascot.offsetWidth;
+            elMascot.classList.add(cls);
+            setTimeout(() => elMascot.classList.remove(cls), 700);
+        }
+
+        function bump(el) {
+            el.classList.remove('bump');
+            void el.offsetWidth;
+            el.classList.add('bump');
+        }
+
+        function loadQuestion() {
+            waiting = false;
+            elProgressFill.style.width = `${(currentIndex / questions.length) * 100}%`;
+
+            const q = questions[currentIndex];
+            elCurrentQ.textContent = currentIndex + 1;
+
+            elQuestionText.textContent = `${q.q} = ?`;
+            elQuestionText.classList.remove('q-in');
+            void elQuestionText.offsetWidth;
+            elQuestionText.classList.add('q-in');
+
+            elOptions.innerHTML = '';
+            q.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.style.setProperty('--i', i);
+                btn.innerHTML = `<span class="key-hint">${i + 1}</span>${opt}`;
+                btn.onclick = () => handleAnswer(opt, btn);
+                elOptions.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(answer, btn) {
+            if (waiting || btn.disabled) return;
+
+            const q = questions[currentIndex];
+
+            if (answer === q.correct) {
+                waiting = true;
+                correct++;
+                currentStreak++;
+                btn.classList.add('correct');
+                elOptions.querySelectorAll('.option-btn').forEach(b => { b.disabled = true; });
+
+                const r = btn.getBoundingClientRect();
+                burstConfetti(r.left + r.width / 2, r.top + r.height / 2, currentStreak >= 2 ? 34 : 20);
+                mascotReact('happy');
+
+                if (currentStreak === 2) {
+                    say('¡Vas excelente, sigue así! 🔥', 'streak');
+                } else if (currentStreak >= 3) {
+                    say(`¡Increíble! Llevas ${currentStreak} aciertos, vas en racha 🚀`, 'streak');
+                } else {
+                    say(['¡Correcto! 🎉', '¡Muy bien! ⭐', '¡Eso es! 👏'][Math.floor(Math.random() * 3)], 'success');
+                }
+
+                if (currentStreak >= 2) {
+                    elLiveStreak.textContent = currentStreak;
+                    elStreakPill.classList.add('show');
+                    bump(elStreakPill);
+                }
+
+                setTimeout(() => {
+                    currentIndex++;
+                    if (currentIndex < questions.length) {
+                        loadQuestion();
+                    } else {
+                        showResults();
+                    }
+                }, currentStreak >= 2 ? 1700 : 1100);
+
+            } else {
+                errors++;
+                currentStreak = 0;
+                elLiveErrors.textContent = errors;
+                bump(elErrorPill);
+                elStreakPill.classList.remove('show');
+
+                btn.classList.add('wrong');
+                btn.disabled = true;
+                setTimeout(() => { btn.classList.remove('wrong'); btn.classList.add('eliminated'); }, 450);
+
+                mascotReact('sad');
+                say('¡Uy! Ese no es. Inténtalo de nuevo 💪', 'error');
+            }
+        }
+
+        function countUp(el, target, suffix, delay) {
+            const duration = 900;
+            setTimeout(() => {
+                const start = performance.now();
+                (function frame(now) {
+                    const t = Math.min((now - start) / duration, 1);
+                    const eased = 1 - Math.pow(1 - t, 3);
+                    el.textContent = Math.round(target * eased) + suffix;
+                    if (t < 1) requestAnimationFrame(frame);
+                })(start);
+            }, delay);
+        }
+
+        function showResults() {
+            elProgressFill.style.width = '100%';
+
+            document.getElementById('quiz-screen').style.display = 'none';
+            document.getElementById('results-screen').classList.add('show');
+
+            const totalAttempts = correct + errors;
+            const accuracy = Math.round((correct / totalAttempts) * 100);
+
+            countUp(document.getElementById('stat-accuracy'), accuracy, '%', 400);
+            countUp(document.getElementById('stat-correct'), correct, '', 500);
+            countUp(document.getElementById('stat-errors'), errors, '', 600);
+
+            const emoji = accuracy === 100 ? '🏆' : accuracy >= 66 ? '🎉' : '💪';
+            const subtitle = accuracy === 100
+                ? '¡Perfecto! Regresa para ver tu recompensa'
+                : accuracy >= 66
+                    ? '¡Bien hecho! Tu recompensa te espera'
+                    : '¡Sigue practicando! Tu recompensa te espera';
+            document.getElementById('results-emoji').textContent = emoji;
+            document.getElementById('results-subtitle').textContent = subtitle;
+
+            rainConfetti(accuracy === 100 ? 90 : 55);
+
+            // Estrellas: 3 sin errores, 2 con un error, 1 con dos o más
+            let stars = 3;
+            if (errors === 1) stars = 2;
+            if (errors >= 2)  stars = 1;
+
+            document.getElementById('btn-continue').onclick = () => {
+                window.location.href = `index.html?completed=${levelId}&stars=${stars}`;
+            };
+        }
+
+        // Atajos de teclado: 1, 2, 3 eligen opción
+        document.addEventListener('keydown', (e) => {
+            const idx = parseInt(e.key) - 1;
+            const btns = elOptions.querySelectorAll('.option-btn');
+            if (idx >= 0 && idx < btns.length) btns[idx].click();
+        });
+
+        loadQuestion();
+    </script>
+</body>
+</html>

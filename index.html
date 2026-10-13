@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mathsics — Progreso</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Ambiente: orbes de color, nubes y patrón de puntos -->
+    <div class="bg-ambient" aria-hidden="true">
+        <span class="orb orb-sky"></span>
+        <span class="orb orb-indigo"></span>
+        <span class="orb orb-emerald"></span>
+        <span class="cloud c1"></span>
+        <span class="cloud c2"></span>
+        <span class="cloud c3"></span>
+    </div>
+    <div class="bg-pattern" aria-hidden="true"></div>
+
+    <header class="header">
+        <div class="logo">
+            <span class="logo-icon">📐</span>
+            <div class="title-area">
+                <h1>Mathsics</h1>
+                <p>Avanza en tu aprendizaje</p>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="stat-chip" id="stars-chip" title="Estrellas ganadas">
+                <span class="stat-chip-icon">⭐</span>
+                <span id="total-stars">0</span>
+            </div>
+
+            <div class="progress-badge" title="Niveles principales completados">
+                <span id="progress-text">0 de 8</span>
+                <span class="progress-mini"><span id="progress-mini-fill"></span></span>
+            </div>
+
+            <button id="btn-reset" class="secondary-btn">↺ <span class="btn-label">Reiniciar</span></button>
+        </div>
+    </header>
+
+    <main class="tree-wrapper" id="tree-wrapper">
+        <div id="tree-container">
+            <svg id="tree-svg"></svg>
+            <div id="nodes-container"></div>
+        </div>
+    </main>
+
+    <!-- Tooltip que sigue al nivel -->
+    <div class="node-tooltip" id="node-tooltip" role="tooltip">
+        <strong id="tooltip-title"></strong>
+        <span id="tooltip-sub"></span>
+    </div>
+
+    <script src="fx.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
